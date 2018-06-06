@@ -9,7 +9,7 @@ import {User} from "./models/user"
 //var Todo = connection.model("Todo", todo.todoSchema);
 
 const port = process.env.PORT || 3000;
-let  app = express();
+export const app = express();
 
 app.use(bodyParser.json())
 
