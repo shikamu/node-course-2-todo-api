@@ -3,11 +3,14 @@ const request = require("supertest");
 
 const {app} = require("./../server");
 const {Todo} = require("./../models/todo");
+import {db} from "./../db/mongoose";
 
 
 const todos = [{
+    _id: new db.ObjectID(),
     text: "First test todo"
 }, {
+    _id: new db.ObjectID(),
     text: "Second test todo"
 }];
 
@@ -79,4 +82,31 @@ describe("GET /todos", () =>{
             })
             .end(done);
     });
+});
+
+describe("GET /todos/:id", () =>{
+    it("should return todo doc", (done) => {
+        request(app)
+            .get(`/todos/${todos[0]._id.toHexString()}`)
+            .expect(200)
+            .expect((res:any) => {
+                expect(res.body.todo.text).toBe(todos[0].text);
+            })
+            .end(done);
+    });
+
+    it("should return a 404 if todo not found", (done) =>{
+        request(app)
+            .get(`/todos/${new db.ObjectID().toHexString()}`)
+            .expect(404)
+            .end(done);
+    });
+
+    it("should return 404 for invalid object IDs", (done) =>{
+        request(app)
+            .get("/todos/123")
+            .expect(404)
+            .end(done);
+    });
+
 });
