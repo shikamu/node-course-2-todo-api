@@ -32,6 +32,26 @@ app.get("/todos", (req, res) =>{
     });
 });
 
+app.get("/todos/:id", (req, res) =>{
+    var id = req.params.id;
+    if(!db.ObjectID.isValid(id))
+    {
+        console.log("invalid");
+        return res.status(404).send();
+    }
+    else
+    {
+        Todo.findById(id).then((todo) =>{
+            if(!todo)
+            {
+                console.log("not found");
+                return res.status(404).send();
+            }
+            res.status(200).send({todo});
+        }).catch((e) => res.status(400).send());
+    }
+});
+
 app.listen(port, ()=>{
     console.log("Started on port", port);
 });
